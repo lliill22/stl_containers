@@ -1,0 +1,50 @@
+#include <iostream>
+using namespace std;
+namespace s21 {
+
+template <class T>
+class vector {
+ public:
+  
+  using value_type = T;
+  using reference = T &;
+  using const_reference = const T &;
+  using iterator = T *;
+  using const_iterator = const T *;
+  using size_type = size_t;
+
+  vector() : size_(0), capacity_(0) data_(nullptr){};
+  vector(int size, value_type data) : size_(size), capacity_(2 * size){Allocate()};
+
+  vector(const vector &v) : size_(v.size_), capacity_(2 * v.size_) {
+    Allocate();
+    Copy(v);
+  };
+
+  vector(vector &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
+    v.data_ = nullptr;
+    v.size_ = 0;
+    v.capacity_ = 0;
+  }
+
+ private:
+  void Allocate(value_type data) {
+    try {
+      data_ = new value_type[capacity_]{data};
+    } catch (bad_alloc) {
+      delete[] data;
+      throw new bad_alloc;
+    }
+  };
+
+  void Copy(const vector &v) {
+    for (size_t i = 0; i < size_; i++) {
+      data_[i] = v.data_[i];
+    }
+  };
+
+  value_type *data_;
+  size_type size_;
+  size_type capacity_;
+};
+}  // namespace s21
