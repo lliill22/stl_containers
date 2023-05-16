@@ -1,4 +1,3 @@
-#include <iostream>
 using namespace std;
 namespace s21 {
 
@@ -17,14 +16,22 @@ class vector {
   vector(int size, value_type data) : size_(size), capacity_(2 * size){Allocate()};
 
   vector(const vector &v) : size_(v.size_), capacity_(2 * v.size_) {
-    Allocate();
+    Allocate(v);
     Copy(v);
+  };
+
+  vector(size_type n) : size_(n), capacity_(2 * n) {
+    Allocate(value_type());
   };
 
   vector(vector &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
     v.data_ = nullptr;
     v.size_ = 0;
     v.capacity_ = 0;
+  };
+
+  ~vector() {
+    Destruct();
   }
 
  private:
@@ -37,8 +44,12 @@ class vector {
     }
   };
 
+  void Destruct() {
+    delete data_;
+  };
+
   void Copy(const vector &v) {
-    for (size_t i = 0; i < size_; i++) {
+    for (size_type i = 0; i < size_; i++) {
       data_[i] = v.data_[i];
     }
   };
