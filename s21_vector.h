@@ -20,6 +20,12 @@ class vector {
     Copy(v);
   };
 
+  vector(std::initializer_list<value_type> const &items) : size_(item.size()), capacity_(2 * item.size()) {
+    Allocate(value_type());
+    std::copy(items.begin(), items.end(), data);
+  }
+
+
   vector(size_type n) : size_(n), capacity_(2 * n) {
     Allocate(value_type());
   };
