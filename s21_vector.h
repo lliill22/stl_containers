@@ -40,12 +40,76 @@ class vector {
     Destruct();
   }
 
-  void operator=(vector<value_type> v) : data_(v.data_), size_(v.size_), capacity_(v.capacity_) {
+  void operator=(vector<value_type> &&v) : data_(v.data_), size_(v.size_), capacity_(v.capacity_) {
     v.data_ = nullptr;
     v.size_ = 0;
     v.capacity_ = 0;
+  };
+
+  reference at(size_type pos) {
+    if (pos => size_ || pos < 0) {
+      throw std::out_of_range("pos > size or pos < 0")
+    }
+    return data_[pos]
+  };
+
+  reference operator[] (size_type pos) {
+    return data_[pos];
+  };
+
+  const_reference front() {
+    if (!data_) {
+      throw std::invalid_argument("empty vector");
+    }
+    return data_[0];
+  };
+
+  const_reference back() {
+    if (!data_) {
+      throw std::invalid_argument("empty vector");
+    }
+    return data_[size_ - 1];
+  };
+
+  value_type* data() {
+    return data_;
+  };
+
+  iterator begin() {
+    return data_;
+  };
+
+  iterator end() {
+    return data_+size_;
+  };
+
+  bool empty() {
+    return data_ ? true : false;
+  };
+  
+  size_type size() {
+    return size_;
+  };
+
+  // size_type size_max() {
+
+  // };
+
+  // void reserve (size_type size) {
+
+  // }
+
+  size_type capacity() {
+    return capacity_;
+  } 
+
+  void shrink_to_fit() {
+    value_type* p = end();
+    delete p;
+    capacity_ = size_;
   }
 
+  
  private:
   void Allocate(value_type data) {
     try {
