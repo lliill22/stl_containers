@@ -15,7 +15,7 @@ class vector {
   vector() : size_(0), capacity_(0) data_(nullptr){};
   vector(int size, value_type data) : size_(size), capacity_(2 * size){Allocate()};
 
-  vector(const vector &v) : size_(v.size_), capacity_(2 * v.size_) {
+  vector(const vector<value_type> &v) : size_(v.size_), capacity_(2 * v.size_) {
     Allocate(v);
     Copy(v);
   };
@@ -30,7 +30,7 @@ class vector {
     Allocate(value_type());
   };
 
-  vector(vector &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
+  vector(vector<value_type> &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
     v.data_ = nullptr;
     v.size_ = 0;
     v.capacity_ = 0;
@@ -38,6 +38,12 @@ class vector {
 
   ~vector() {
     Destruct();
+  }
+
+  void operator=(vector<value_type> v) : data_(v.data_), size_(v.size_), capacity_(v.capacity_) {
+    v.data_ = nullptr;
+    v.size_ = 0;
+    v.capacity_ = 0;
   }
 
  private:
