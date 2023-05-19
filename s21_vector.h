@@ -135,13 +135,47 @@ class vector {
     }
   };
 
-  // iterator insert(iterator pos, const_reference value) {
+  iterator insert(iterator pos, const_reference value) {
+    value_type *temp = new value_type[capacity_+1]();
+    iterator p = data_;
+    size_type i = 0;
+    while (p != pos && p) {
+      temp[i] = *p;
+      p++;
+      i++;
+    }
+    temp[i] = value;
+    i++;
+    while (p) {
+      temp[i] = *p;
+      p++;
+      i++;
+    }
+    capacity_++;
+    size_++;
+  };
 
-  // };
-
-  // void erase(iterator pos) {
-
-  // }
+  void erase(iterator pos) {
+    value_type *temp = new value_type[capacity_]();
+    iterator p = data_;
+    size_type i = 0;
+    while (p != pos && p)
+    {
+      temp[i] = *p;
+      p++;
+      i++;
+    }
+    p++;
+    while (p != pos && p)
+    {
+      temp[i] = *p;
+      p++;
+      i++;
+    }
+    size_--;
+    delete data_;
+    data_ = temp;
+  }
 
   void push_back(const_reference value) {
     if (capacity_ <= size_) {
