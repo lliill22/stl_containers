@@ -114,14 +114,32 @@ class vector {
 
   size_type capacity() {
     return capacity_;
-  } 
+  };
 
   void shrink_to_fit() {
     value_type* p = end();
     delete p;
     capacity_ = size_;
-  }
+  };
 
+  void clear() {
+    for (size_type i = 0; i < size_; i++) {
+      data_[i] = value_type();
+    }
+  };
+
+  // iterator insert(iterator pos, const_reference value) {
+
+  // };
+  // void erase(iterator pos) {
+
+  // }
+
+  void swap(vector& other) {
+    value_type *temp = other.data_;
+    other.data_ = data_;
+    data_ = temp;
+  }
   
  private:
   void Allocate(value_type data) {
