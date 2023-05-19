@@ -23,7 +23,7 @@ class vector {
   vector(std::initializer_list<value_type> const &items) : size_(item.size()), capacity_(2 * item.size()) {
     Allocate(value_type());
     std::copy(items.begin(), items.end(), data);
-  }
+  };
 
 
   vector(size_type n) : size_(n), capacity_(2 * n) {
@@ -91,13 +91,26 @@ class vector {
     return size_;
   };
 
-  // size_type size_max() {
+  size_type max_size() {
+    return std::numeric_limits<value_type>::max();
+  };
 
-  // };
-
-  // void reserve (size_type size) {
-
-  // }
+  void reserve (size_type size) {
+    if (size > max_size()) {
+      throw std::out_of_range("size > max_size");
+    }
+    
+    if (size > capacity) {
+      value_type *temp;
+      temp = new value_type[size];
+      for (size_type i = 0; i < size_; i++) {
+        temp[i] = data_[i];
+      }
+      delete data_;
+      data_ = temp;
+      capacity_ = size;
+    }
+  }
 
   size_type capacity() {
     return capacity_;
@@ -116,7 +129,7 @@ class vector {
       data_ = new value_type[capacity_]{data};
     } catch (bad_alloc) {
       delete[] data;
-      throw new bad_alloc;
+      throw new std::bad_alloc();
     }
   };
 
