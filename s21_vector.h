@@ -131,10 +131,34 @@ class vector {
   // iterator insert(iterator pos, const_reference value) {
 
   // };
+
   // void erase(iterator pos) {
 
   // }
 
+  void push_back(const_reference value) {
+    if (capacity_ <= size_) {
+      value_type *temp = new value_type[size_*2];
+      for (size_type i = 0; i < size_; i++) {
+        temp[i] = data_[i];
+      }
+      size_++;
+      temp[size_] = value;
+      delete data_;
+      data_ = temp;
+      capacity_ = size_ * 2;
+    } else {
+      data_[size_+1] = value;
+    }
+  };
+
+  void pop_back() {
+    if (data_) {
+      data_[size_] = value_type();
+      size_--;
+    }
+  };
+  
   void swap(vector& other) {
     value_type *temp = other.data_;
     other.data_ = data_;
