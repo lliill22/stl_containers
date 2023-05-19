@@ -1,3 +1,7 @@
+#include <cstddef>
+#include <initializer_list>
+#include <iostream>
+#include <limits>
 using namespace std;
 namespace s21 {
 
@@ -12,15 +16,15 @@ class vector {
   using const_iterator = const T *;
   using size_type = size_t;
 
-  vector() : size_(0), capacity_(0) data_(nullptr){};
-  vector(int size, value_type data) : size_(size), capacity_(2 * size){Allocate()};
+  vector() : size_(0), capacity_(0), data_(nullptr){};
+  vector(int size, value_type data) : size_(size), capacity_(2 * size){Allocate();};
 
   vector(const vector<value_type> &v) : size_(v.size_), capacity_(2 * v.size_) {
     Allocate(v);
     Copy(v);
   };
 
-  vector(std::initializer_list<value_type> const &items) : size_(item.size()), capacity_(2 * item.size()) {
+  vector(std::initializer_list<value_type> const &items) : size_(items.size()), capacity_(2 * items.size()) {
     Allocate(value_type());
     std::copy(items.begin(), items.end(), data);
   };
@@ -40,17 +44,20 @@ class vector {
     Destruct();
   }
 
-  void operator=(vector<value_type> &&v) : data_(v.data_), size_(v.size_), capacity_(v.capacity_) {
+  void operator=(vector<value_type> &&v) {
+    data_ = v.data_;
+    size_ = v.size_;
+    capacity_ = v.capacity_;
     v.data_ = nullptr;
     v.size_ = 0;
     v.capacity_ = 0;
   };
 
   reference at(size_type pos) {
-    if (pos => size_ || pos < 0) {
-      throw std::out_of_range("pos > size or pos < 0")
+    if (pos >= size_ || pos < 0) {
+      throw std::out_of_range("pos > size or pos < 0");
     }
-    return data_[pos]
+    return data_[pos];
   };
 
   reference operator[] (size_type pos) {
@@ -92,7 +99,7 @@ class vector {
   };
 
   size_type max_size() {
-    return std::numeric_limits<value_type>::max();
+    return numeric_limits<value_type()>::max(value_type());
   };
 
   void reserve (size_type size) {
@@ -158,7 +165,7 @@ class vector {
       size_--;
     }
   };
-  
+
   void swap(vector& other) {
     value_type *temp = other.data_;
     other.data_ = data_;
@@ -169,9 +176,9 @@ class vector {
   void Allocate(value_type data) {
     try {
       data_ = new value_type[capacity_]{data};
-    } catch (bad_alloc) {
+    } catch (bad_alloc()) {
       delete[] data;
-      throw new std::bad_alloc();
+      throw new bad_alloc();
     }
   };
 
