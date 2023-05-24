@@ -2,7 +2,6 @@
 #include <initializer_list>
 #include <iostream>
 #include <limits>
-using namespace std;
 namespace s21 {
 
 template <class T>
@@ -17,21 +16,27 @@ class vector {
   using size_type = size_t;
 
   vector() : size_(0), capacity_(0), data_(nullptr){};
-  vector(int size, value_type data) : size_(size), capacity_(2 * size){Allocate();};
+  vector(int size, value_type data) : size_(size), capacity_(2 * size) {
+    Allocate();
+  };
 
   vector(const vector<value_type> &v) : size_(v.size_), capacity_(2 * v.size_) {
-    Allocate(v);
+    Allocate();
     Copy(v);
   };
 
   vector(std::initializer_list<value_type> const &items) : size_(items.size()), capacity_(2 * items.size()) {
-    Allocate(value_type());
-    std::copy(items.begin(), items.end(), data);
+    Allocate();
+    auto it = items.begin();
+    for (size_type i = 0; i < size_ && it != items.end(); i++, it++)
+    {
+      data_[i] = *it;
+    }
   };
 
 
   vector(size_type n) : size_(n), capacity_(2 * n) {
-    Allocate(value_type());
+    Allocate();
   };
 
   vector(vector<value_type> &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
@@ -87,11 +92,11 @@ class vector {
   };
 
   iterator end() {
-    return data_+size_;
+    return data_ + size_;
   };
 
   bool empty() {
-    return data_ ? true : false;
+    return size_ == 0;
   };
   
   size_type size() {
@@ -99,7 +104,7 @@ class vector {
   };
 
   size_type max_size() {
-    return numeric_limits<value_type()>::max(value_type());
+    return std::numeric_limits<value_type()>::std::max(value_type());
   };
 
   void reserve (size_type size) {
@@ -136,36 +141,43 @@ class vector {
   };
 
   iterator insert(iterator pos, const_reference value) {
-    value_type *temp = new value_type[capacity_+1]();
-    iterator p = data_;
-    size_type i = 0;
-    while (p != pos && p) {
-      temp[i] = *p;
-      p++;
-      i++;
+    if (!pos) {
+      throw std::logic_error("pos is null ptr");
     }
-    temp[i] = value;
-    i++;
-    while (p) {
-      temp[i] = *p;
-      p++;
-      i++;
-    }
-    capacity_++;
+    value_type* temp = new value_type[capacity_ + 1];
     size_++;
+    for (size_type i = 0; i < capacity_+1; i++) {
+      temp[i] = value_type(); 
+    }
+
+    size_type counter = 0;
+    const_iterator it = begin();
+    while (it != pos && it) {
+      temp[counter] = *it;
+      counter++;
+      it++;
+    }
+
+    temp[counter] = value;
+    counter++;
+    
+    while(it && counter < size_) {
+      temp[counter] = *it;
+      counter++;
+      it++;
+    }
+    delete[] data_;
+    data_ = temp;
+    return pos;
   };
 
   void erase(iterator pos) {
-    value_type *temp = new value_type[capacity_]();
+    value_type *temp = new value_type[capacity_]{};
     iterator p = data_;
     size_type i = 0;
-    while (p != pos && p)
-    {
-      temp[i] = *p;
-      p++;
-      i++;
+    for (p; p != pos; p++) {
+      
     }
-    p++;
     while (p != pos && p)
     {
       temp[i] = *p;
@@ -178,19 +190,17 @@ class vector {
   }
 
   void push_back(const_reference value) {
-    if (capacity_ <= size_) {
-      value_type *temp = new value_type[size_*2];
-      for (size_type i = 0; i < size_; i++) {
-        temp[i] = data_[i];
-      }
-      size_++;
-      temp[size_] = value;
-      delete data_;
-      data_ = temp;
-      capacity_ = size_ * 2;
-    } else {
-      data_[size_+1] = value;
+    if (capacity_ == size_) {
+      capacity_ *= 2;
     }
+    value_type * temp = new value_type[capacity_]{};
+    for (size_type i = 0; i < size_; i++) {
+      temp[i] = data_[i];
+    }
+    temp[size_] = value;
+    size_++;
+    delete[] data_;
+    data_ = temp;
   };
 
   void pop_back() {
@@ -207,12 +217,13 @@ class vector {
   }
   
  private:
-  void Allocate(value_type data) {
+  void Allocate() {
     try {
-      data_ = new value_type[capacity_]{data};
-    } catch (bad_alloc()) {
-      delete[] data;
-      throw new bad_alloc();
+      data_ = new value_type[capacity_];
+      for (size_type i = 0; i < size_; i++) data_[i] = value_type();
+    } catch (std::bad_alloc()) {
+      delete [] data_;
+      throw new std::bad_alloc();
     }
   };
 
