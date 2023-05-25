@@ -173,20 +173,18 @@ class vector {
 
   void erase(iterator pos) {
     value_type *temp = new value_type[capacity_]{};
-    iterator p = data_;
+    iterator it = data_;
     size_type i = 0;
-    for (p; p != pos; p++) {
-      
+    for (it; it != pos; i++, it++) {
+      temp[i] = data_[i];
     }
-    while (p != pos && p)
-    {
-      temp[i] = *p;
-      p++;
-      i++;
+    i++;
+    for (i; i < size_; i++) {
+      temp[i-1] = data_[i];
     }
-    size_--;
-    delete data_;
+    delete[] data_;
     data_ = temp;
+    size_ -= 1;
   }
 
   void push_back(const_reference value) {
@@ -211,9 +209,15 @@ class vector {
   };
 
   void swap(vector& other) {
-    value_type *temp = other.data_;
-    other.data_ = data_;
-    data_ = temp;
+    value_type *temp_data = data_;
+    size_type temp_size = size_;
+    size_type temp_capacity = capacity_;
+    data_ = other.data_;
+    size_ = other.size_;
+    capacity_ = other.capacity_;
+    other.data_ = temp_data;
+    other.size_ = temp_size;
+    other.capacity_ = temp_capacity;
   }
   
  private:
