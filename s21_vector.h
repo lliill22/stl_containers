@@ -16,7 +16,7 @@ class vector {
   using const_iterator = const T *;
   using size_type = size_t;
 
-  vector() : data_(nullptr), size_(0), capacity_(0) {};
+  vector() noexcept : data_(nullptr), size_(0), capacity_(0) {};
   vector(int size, value_type data) : size_(size), capacity_(2 * size) {
     Allocate(*this);
   };
@@ -55,30 +55,30 @@ class vector {
     v.capacity_ = 0;
   };
 
-  reference at(size_type pos) {
+  reference at(size_type pos) const {
     if (pos >= size_ || pos < 0) {
       throw std::out_of_range("pos > size or pos < 0");
     }
     return data_[pos];
   };
 
-  reference operator[](size_type pos) { return data_[pos]; };
+  reference operator[](size_type pos) const { return data_[pos]; };
 
-  const_reference front() {
+  const_reference front() const {
     if (!data_) {
       throw std::invalid_argument("empty vector");
     }
     return data_[0];
   };
 
-  const_reference back() {
+  const_reference back() const {
     if (!data_) {
       throw std::invalid_argument("empty vector");
     }
     return data_[size_ - 1];
   };
 
-  value_type *data() { return data_; };
+  value_type *data() const noexcept{ return data_; };
 
   iterator begin() { return data_; };
 
@@ -88,7 +88,7 @@ class vector {
 
   size_type size() { return size_; };
 
-  size_type max_size() {
+  size_type max_size() const noexcept {
     return std::numeric_limits<value_type()>::std::max(value_type());
   };
 
@@ -109,15 +109,15 @@ class vector {
     }
   }
 
-  size_type capacity() { return capacity_; };
+  size_type capacity() const noexcept{ return capacity_; };
 
-  void shrink_to_fit() {
+  void shrink_to_fit() noexcept {
     value_type *p = end();
     delete p;
     capacity_ = size_;
   };
 
-  void clear() {
+  void clear() const noexcept {
     for (size_type i = 0; i < size_; i++) {
       data_[i] = value_type();
     }
@@ -155,7 +155,8 @@ class vector {
   };
 
   void erase(iterator pos) {
-    value_type *temp = new value_type[capacity_]{};
+    value_type *temp;
+    Allocate(temp)
     iterator it = data_;
     size_type i = 0;
     for (; it != pos; i++, it++) {
@@ -213,7 +214,7 @@ class vector {
     }
   };
 
-  void Destruct() { delete data_; };
+  void Destruct() const noexcept { delete[] data_; };
 
   void Copy(const vector &v) {
     for (size_type i = 0; i < size_; i++) {
