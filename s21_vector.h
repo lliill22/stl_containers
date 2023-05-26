@@ -16,29 +16,29 @@ class vector {
   using const_iterator = const T *;
   using size_type = size_t;
 
-  vector() : size_(0), capacity_(0), data_(nullptr){};
+  vector() : data_(nullptr), size_(0), capacity_(0) {};
   vector(int size, value_type data) : size_(size), capacity_(2 * size) {
-    Allocate();
+    Allocate(*this);
   };
 
   vector(const vector<value_type> &v) : size_(v.size_), capacity_(2 * v.size_) {
-    Allocate();
+    Allocate(*this);
     Copy(v);
   };
 
   vector(std::initializer_list<value_type> const &items)
       : size_(items.size()), capacity_(2 * items.size()) {
-    Allocate();
+    Allocate(*this);
     auto it = items.begin();
     for (size_type i = 0; i < size_ && it != items.end(); i++, it++) {
       data_[i] = *it;
     }
   };
 
-  vector(size_type n) : size_(n), capacity_(2 * n) { Allocate(); };
+  vector(size_type n) : size_(n), capacity_(2 * n) { Allocate(*this); };
 
   vector(vector<value_type> &&v)
-      : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
+      :  data_(v.data_), size_(v.size_), capacity_(v.capacity_) {
     v.data_ = nullptr;
     v.size_ = 0;
     v.capacity_ = 0;
@@ -158,11 +158,11 @@ class vector {
     value_type *temp = new value_type[capacity_]{};
     iterator it = data_;
     size_type i = 0;
-    for (it; it != pos; i++, it++) {
+    for (; it != pos; i++, it++) {
       temp[i] = data_[i];
     }
     i++;
-    for (i; i < size_; i++) {
+    for (; i < size_; i++) {
       temp[i - 1] = data_[i];
     }
     delete[] data_;
@@ -204,11 +204,11 @@ class vector {
   }
 
  private:
-  void Allocate() {
+  void Allocate( vector<value_type> &other) {
     try {
-      data_ = new value_type[capacity_]{};
+      other.data_ = new value_type[capacity_]{};
     } catch (std::bad_alloc()) {
-      delete[] data_;
+      delete[] other.data_;
       throw new std::bad_alloc();
     }
   };
