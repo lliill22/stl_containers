@@ -1,3 +1,5 @@
+#ifndef S21_VECTOR_H_
+#define S21_VECTOR_H_
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
@@ -7,7 +9,6 @@ namespace s21 {
 template <class T>
 class vector {
  public:
-  
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
@@ -25,29 +26,25 @@ class vector {
     Copy(v);
   };
 
-  vector(std::initializer_list<value_type> const &items) : size_(items.size()), capacity_(2 * items.size()) {
+  vector(std::initializer_list<value_type> const &items)
+      : size_(items.size()), capacity_(2 * items.size()) {
     Allocate();
     auto it = items.begin();
-    for (size_type i = 0; i < size_ && it != items.end(); i++, it++)
-    {
+    for (size_type i = 0; i < size_ && it != items.end(); i++, it++) {
       data_[i] = *it;
     }
   };
 
+  vector(size_type n) : size_(n), capacity_(2 * n) { Allocate(); };
 
-  vector(size_type n) : size_(n), capacity_(2 * n) {
-    Allocate();
-  };
-
-  vector(vector<value_type> &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
+  vector(vector<value_type> &&v)
+      : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
     v.data_ = nullptr;
     v.size_ = 0;
     v.capacity_ = 0;
   };
 
-  ~vector() {
-    Destruct();
-  }
+  ~vector() { Destruct(); }
 
   void operator=(vector<value_type> &&v) {
     data_ = v.data_;
@@ -65,9 +62,7 @@ class vector {
     return data_[pos];
   };
 
-  reference operator[] (size_type pos) {
-    return data_[pos];
-  };
+  reference operator[](size_type pos) { return data_[pos]; };
 
   const_reference front() {
     if (!data_) {
@@ -83,35 +78,25 @@ class vector {
     return data_[size_ - 1];
   };
 
-  value_type* data() {
-    return data_;
-  };
+  value_type *data() { return data_; };
 
-  iterator begin() {
-    return data_;
-  };
+  iterator begin() { return data_; };
 
-  iterator end() {
-    return data_ + size_;
-  };
+  iterator end() { return data_ + size_; };
 
-  bool empty() {
-    return size_ == 0;
-  };
-  
-  size_type size() {
-    return size_;
-  };
+  bool empty() { return size_ == 0; };
+
+  size_type size() { return size_; };
 
   size_type max_size() {
     return std::numeric_limits<value_type()>::std::max(value_type());
   };
 
-  void reserve (size_type size) {
+  void reserve(size_type size) {
     if (size > max_size()) {
       throw std::out_of_range("size > max_size");
     }
-    
+
     if (size > capacity) {
       value_type *temp;
       temp = new value_type[size];
@@ -124,12 +109,10 @@ class vector {
     }
   }
 
-  size_type capacity() {
-    return capacity_;
-  };
+  size_type capacity() { return capacity_; };
 
   void shrink_to_fit() {
-    value_type* p = end();
+    value_type *p = end();
     delete p;
     capacity_ = size_;
   };
@@ -144,10 +127,10 @@ class vector {
     if (!pos) {
       throw std::logic_error("pos is null ptr");
     }
-    value_type* temp = new value_type[capacity_ + 1];
+    value_type *temp = new value_type[capacity_ + 1];
     size_++;
-    for (size_type i = 0; i < capacity_+1; i++) {
-      temp[i] = value_type(); 
+    for (size_type i = 0; i < capacity_ + 1; i++) {
+      temp[i] = value_type();
     }
 
     size_type counter = 0;
@@ -160,8 +143,8 @@ class vector {
 
     temp[counter] = value;
     counter++;
-    
-    while(it && counter < size_) {
+
+    while (it && counter < size_) {
       temp[counter] = *it;
       counter++;
       it++;
@@ -180,7 +163,7 @@ class vector {
     }
     i++;
     for (i; i < size_; i++) {
-      temp[i-1] = data_[i];
+      temp[i - 1] = data_[i];
     }
     delete[] data_;
     data_ = temp;
@@ -191,7 +174,7 @@ class vector {
     if (capacity_ == size_) {
       capacity_ *= 2;
     }
-    value_type * temp = new value_type[capacity_]{};
+    value_type *temp = new value_type[capacity_]{};
     for (size_type i = 0; i < size_; i++) {
       temp[i] = data_[i];
     }
@@ -208,7 +191,7 @@ class vector {
     }
   };
 
-  void swap(vector& other) {
+  void swap(vector &other) {
     value_type *temp_data = data_;
     size_type temp_size = size_;
     size_type temp_capacity = capacity_;
@@ -219,21 +202,18 @@ class vector {
     other.size_ = temp_size;
     other.capacity_ = temp_capacity;
   }
-  
+
  private:
   void Allocate() {
     try {
-      data_ = new value_type[capacity_];
-      for (size_type i = 0; i < size_; i++) data_[i] = value_type();
+      data_ = new value_type[capacity_]{};
     } catch (std::bad_alloc()) {
-      delete [] data_;
+      delete[] data_;
       throw new std::bad_alloc();
     }
   };
 
-  void Destruct() {
-    delete data_;
-  };
+  void Destruct() { delete data_; };
 
   void Copy(const vector &v) {
     for (size_type i = 0; i < size_; i++) {
@@ -246,3 +226,5 @@ class vector {
   size_type capacity_;
 };
 }  // namespace s21
+
+#endif  // S21_VECTOR_H_
