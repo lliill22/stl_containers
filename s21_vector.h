@@ -155,8 +155,8 @@ class vector {
   };
 
   void erase(iterator pos) {
-    value_type *temp;
-    Allocate(temp)
+    value_type *temp = nullptr;
+    Allocate(*temp);
     iterator it = data_;
     size_type i = 0;
     for (; it != pos; i++, it++) {
@@ -205,7 +205,7 @@ class vector {
   }
 
  private:
-  void Allocate( vector<value_type> &other) {
+  void Allocate( vector<value_type> other) {
     try {
       other.data_ = new value_type[capacity_]{};
     } catch (std::bad_alloc()) {
